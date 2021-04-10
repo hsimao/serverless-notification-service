@@ -2,20 +2,25 @@ import AWS from "aws-sdk";
 
 const ses = new AWS.SES({ region: "eu-west-1" });
 
-async function sendMiail(event, context) {
+async function sendMail(event, context) {
+  const record = event.Records[0];
+
+  const email = JSON.parse(record.body);
+  const { subject, body, recipient } = email;
+
   const params = {
     Source: "e087754958@gmail.com",
     Destination: {
-      ToAddresses: ["e087754958@gmail.com"]
+      ToAddresses: [recipient]
     },
     Message: {
       Body: {
         Text: {
-          Data: "Hello from Mars"
+          Data: body
         }
       },
       Subject: {
-        Data: "Test Mail"
+        Data: subject
       }
     }
   };
@@ -29,4 +34,4 @@ async function sendMiail(event, context) {
   }
 }
 
-export const handler = sendMiail;
+export const handler = sendMail;
